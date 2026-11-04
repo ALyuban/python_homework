@@ -37,13 +37,13 @@ def test_shop():
 
     # 6. Заполните форму своими данными: имя, фамилия, почтовый индекс.
     first_name = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[@id='first-name']")))
-    first_name.send_keys("Кирилл")  # Твое имя
+    first_name.send_keys("Анна")  # Твое имя
 
     last_name = driver.find_element(By.XPATH, "//input[@id='last-name']")
-    last_name.send_keys("Гончаров")  # Твоя фамилия
+    last_name.send_keys("Любан")  # Твоя фамилия
 
     postal_code = driver.find_element(By.XPATH, "//input[@id='postal-code']")
-    postal_code.send_keys("457351")  # Твой почтовый индекс.
+    postal_code.send_keys("440068")  # Твой почтовый индекс.
 
     # 7.Нажмите кнопку Continue.
     continue_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@id='continue']")))
