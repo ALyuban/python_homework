@@ -3,28 +3,40 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 def test_calculator():
     driver = webdriver.Chrome()
     wait = WebDriverWait(driver, timeout=10)
 
-    # 1. Откройте страницу https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html в Google Chrome
-    driver.get("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
+    # 1. Откройте страницу
+    driver.get(
+        "https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
 
-    # 2. В поле delay по умолчанию Leave значение 45
-    input_delay = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#delay")))
+    # 2. Очистить поле и ввести 45
+    input_delay = wait.until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "#delay")))
+    input_delay.clear()
     input_delay.send_keys("45")
 
-    # 3. Нажмите на кнопки:
-    submit_button_7 = driver.find_element(By.XPATH, "//span[normalize-space()='7']")
-    submit_button_7.click()
-    submit_button = driver.find_element(By.XPATH, "//span[normalize-space()='+']")
-    submit_button.click()
-    submit_button_8 = driver.find_element(By.XPATH, "//span[normalize-space()='8']")
-    submit_button_8.click()
-    submit_button = driver.find_element(By.XPATH, "//span[@class='btn btn-outline-warning']")
-    submit_button.click()
+    # 3. Нажмите на кнопки
+    driver.find_element(By.XPATH, "//span[normalize-space()='7']").click()
+    driver.find_element(By.XPATH, "//span[normalize-space()='+']").click()
+    driver.find_element(By.XPATH, "//span[normalize-space()='8']").click()
+    driver.find_element(By.XPATH, "//span[normalize-space()='=']").click()
 
-    # 4. Проверьте (assert), что в окне отобразится результат через 15 секунд.
-    window_field = WebDriverWait(driver, timeout=45).until(
-    EC.presence_of_element_located((By.XPATH, "//input[@id='delay']")), "Результат через 15 секунд")
+    # 4. Проверьте (assert), что в окне отобразится результат 15
+    WebDriverWait(driver, timeout=50).until(
+        EC.text_to_be_present_in_element((By.CLASS_NAME, "screen"), "15"),
+        "Результат '15' не появился в поле .screen вовремя"
+    )
+
+    actual_text = driver.find_element(
+        By.CLASS_NAME, "screen").text
+    assert "15" in actual_text, f"Ожидался результат 15, но получили {
+        actual_text}"
+
     driver.quit()
+
+
+if __name__ == "__main__":
+    test_calculator()

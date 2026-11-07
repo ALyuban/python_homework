@@ -5,55 +5,76 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 def test_shop():
+    # Используем Chrome или Firefox (убедитесь, что драйвер установлен)
     driver = webdriver.Firefox()
     wait = WebDriverWait(driver, 10)
 
-    # 1. Откройте страницу: https://www.saucedemo.com/ в FireFox.
+    # 1. Откройте страницу: https://www.saucedemo.com/
     driver.get("https://www.saucedemo.com/")
 
     # 2. Авторизуйтесь как пользователь standard_user.
-    user_name = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@id='user-name']")))
+    user_name = wait.until(
+        EC.presence_of_element_located((By.XPATH, "//input[@id='user-name']")))
     user_name.send_keys("standard_user")
-    password = wait.until(EC.presence_of_element_located((By.XPATH, "//input[@id='password']")))
+
+    password = driver.find_element(By.XPATH, "//input[@id='password']")
     password.send_keys("secret_sauce")
+
     login_btn = driver.find_element(By.XPATH, "//input[@id='login-button']")
     login_btn.click()
 
     # 3. Добавьте в корзину товары:
-    button_to_add_Backpack = driver.find_element(By.XPATH, "//button[@id='add-to-cart-sauce-labs-backpack']")
-    button_to_add_Backpack.click()
-    button_to_add_T_Shirt = driver.find_element(By.XPATH, "//button[@id='add-to-cart-sauce-labs-bolt-t-shirt']")
-    button_to_add_T_Shirt.click()
-    button_to_add_Onesie = driver.find_element(By.XPATH, "//button[@id='add-to-cart-sauce-labs-onesie']")
-    button_to_add_Onesie.click()
+    wait.until(
+        EC.presence_of_element_located(
+            (By.ID, "inventory_container")))
+
+    driver.find_element(
+        By.XPATH, "//button[@id='add-to-cart-sauce-labs-backpack']").click()
+    driver.find_element(
+        By.XPATH, "//button[@id='add-to-cart-sauce-labs-bolt-t-shirt']"
+        ).click()
+    driver.find_element(
+        By.XPATH, "//button[@id='add-to-cart-sauce-labs-onesie']").click()
 
     # 4. Перейдите в корзину.
-    basket_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//a[@aria-label='Cart, 3 items']")))
+    basket_btn = wait.until(
+        EC.element_to_be_clickable((By.CLASS_NAME, "shopping_cart_link")))
     basket_btn.click()
 
-    # 5.Нажмите Checkout.
-    checkout_btn = wait.until(EC.presence_of_element_located((By.XPATH, "//button[@id='checkout']")))
+    # 5. Нажмите Checkout.
+    checkout_btn = wait.until(
+        EC.element_to_be_clickable((By.ID, "checkout")))
     checkout_btn.click()
 
-    # 6. Заполните форму своими данными: имя, фамилия, почтовый индекс.
-    first_name = wait.until(EC.visibility_of_element_located((By.XPATH, "//input[@id='first-name']")))
-    first_name.send_keys("Анна")  # Твое имя
+    # 6. Заполните форму своими данными.
+    first_name = wait.until(
+        EC.visibility_of_element_located((By.ID, "first-name")))
+    first_name.send_keys("Анна")
 
-    last_name = driver.find_element(By.XPATH, "//input[@id='last-name']")
-    last_name.send_keys("Любан")  # Твоя фамилия
+    last_name = driver.find_element(By.ID, "last-name")
+    last_name.send_keys("Любан")
 
-    postal_code = driver.find_element(By.XPATH, "//input[@id='postal-code']")
-    postal_code.send_keys("440068")  # Твой почтовый индекс.
+    postal_code = driver.find_element(By.ID, "postal-code")
+    postal_code.send_keys("440068")
 
-    # 7.Нажмите кнопку Continue.
-    continue_button = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@id='continue']")))
+    # 7. Нажмите кнопку Continue.
+    continue_button = driver.find_element(By.ID, "continue")
     continue_button.click()
 
     # 8. Прочитайте со страницы итоговую стоимость (Total).
-    total_element = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='summary_total_label']")))
+    total_element = wait.until(
+        EC.visibility_of_element_located(
+            (By.CLASS_NAME, "summary_total_label")))
     total_text = total_element.text
 
-    # 9. Закройте браузер. Проверьте, что итоговая сумма равна $58.29.
-    assert total_text == "Total: $58.29", f"Ожидалось 'Total: $58.29', но получено: {total_text}"
-
+    # 9. Закройте браузер.
     driver.quit()
+
+    # 10. Проверьте, что итоговая сумма равна $58.29.
+    assert total_text == "Total: $58.29", (
+        f"Ожидалось 'Total: $58.29', но получено: {total_text}"
+    )
+
+
+if __name__ == "__main__":
+    test_shop()
